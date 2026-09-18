@@ -5,7 +5,9 @@ import { AiEngineering } from '@/components/sections/AiEngineering'
 import { HowWeWork } from '@/components/sections/HowWeWork'
 import { TechStack } from '@/components/sections/TechStack'
 import { Button } from '@/components/ui/Button'
-import { capabilities } from '@/lib/content'
+import { client } from '@/sanity/client'
+import { cms, nth } from '@/sanity/fetch'
+import { CAPABILITIES_QUERY } from '@/sanity/queries'
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -14,7 +16,9 @@ export const metadata: Metadata = {
     'Technology consulting and architecture, product engineering, modernisation, scalability, dedicated teams, AI engineering, and cloud infrastructure — delivered end to end by one accountable team.',
 }
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const capabilities = await client.fetch(CAPABILITIES_QUERY, {}, cms)
+
   return (
     <div id="main">
       <PageHeader
@@ -27,10 +31,10 @@ export default function ServicesPage() {
       <div className="mx-auto w-full max-w-[1440px] px-6 pb-20 lg:px-18 lg:pb-28">
         <ul className="flex flex-col border-t border-rule">
           {capabilities.map((c, i) => (
-            <Reveal as="li" key={c.n} delay={Math.min(i, 4) * 0.06} y={20}>
+            <Reveal as="li" key={c._id} delay={Math.min(i, 4) * 0.06} y={20}>
               <div className="grid grid-cols-1 gap-x-10 gap-y-3 border-b border-rule py-8 lg:grid-cols-[56px_300px_minmax(0,1fr)] lg:py-9">
                 <span className="font-mono text-[13px] tracking-[0.1em] text-brass lg:pt-2.5">
-                  {c.n}
+                  {nth(i)}
                 </span>
                 <h2 className="font-display text-[28px] leading-[1.12] font-normal tracking-[-0.01em] lg:text-[32px]">
                   {c.title}
@@ -38,7 +42,7 @@ export default function ServicesPage() {
                 <div>
                   <p className="text-[16px] leading-[1.62] text-ink-muted">{c.body}</p>
                   <ul className="mt-3.5 flex flex-wrap gap-2">
-                    {c.tags.map((t) => (
+                    {(c.tags ?? []).map((t) => (
                       <li
                         key={t}
                         className="border border-rule px-2.5 py-1 font-mono text-[11px] tracking-[0.06em] text-ink-muted"

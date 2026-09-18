@@ -34,7 +34,7 @@ const sections = [
   {
     n: '05',
     title: 'How long we keep it',
-    body: 'Your message stays in our email inbox for as long as the conversation is useful, and no longer than [RETENTION PERIOD]. We do not archive enquiries anywhere else.',
+    body: 'Your message stays in our email inbox for as long as the conversation is useful. If we don’t end up working together, we delete it within 12 months. We do not archive enquiries anywhere else.',
   },
   {
     n: '06',
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
               a reason, and there is no form to fill in.
             </p>
             <p className="mt-4 font-mono text-[12px] tracking-[0.08em] text-ink-muted">
-              DEV CHOWK · [LEGAL ENTITY NAME] · LAST UPDATED [DATE]
+              DEV CHOWK · LAST UPDATED 18 SEPTEMBER 2026
             </p>
           </div>
         </Reveal>

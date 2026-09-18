@@ -15,7 +15,7 @@ export function ClosingCta() {
               </h2>
               <p className="max-w-[52ch] text-[16px] leading-[1.68] text-ink-muted">
                 Bring a brief or a rough idea. By the end of the call you&apos;ll know whether
-                we&apos;re the right firm and what the first step costs — usually nothing.
+                we&apos;re the right firm — and we can start with a free two-week trial.
               </p>
             </div>
             <Button href={site.booking.href} arrow className="shrink-0">

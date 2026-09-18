@@ -1,9 +1,13 @@
 import { Reveal } from '@/components/motion/Reveal'
 import { SectionHead } from '@/components/sections/SectionHead'
-import { testimonials } from '@/lib/content'
+import { client } from '@/sanity/client'
+import { cms } from '@/sanity/fetch'
+import { TESTIMONIALS_QUERY } from '@/sanity/queries'
 
-export function Testimonials() {
-  // Empty the array and the section removes itself rather than leaving a hole.
+export async function Testimonials() {
+  // Only permission-granted quotes are queried. With none, the section removes
+  // itself rather than leaving a hole or showing placeholders.
+  const testimonials = await client.fetch(TESTIMONIALS_QUERY, {}, cms)
   if (testimonials.length === 0) return null
 
   return (
@@ -18,7 +22,7 @@ export function Testimonials() {
 
         <ul className="mt-14 grid grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t, i) => (
-            <Reveal as="li" key={t.id} delay={i * 0.08} y={22}>
+            <Reveal as="li" key={t._id} delay={i * 0.08} y={22}>
               <figure className="flex h-full flex-col justify-between gap-8 border-t border-rule pt-8">
                 <blockquote className="font-display text-[22px] leading-[1.34] text-pretty lg:text-[25px]">
                   <span className="text-brass" aria-hidden="true">

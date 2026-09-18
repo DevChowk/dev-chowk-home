@@ -1,12 +1,17 @@
 import { Reveal } from '@/components/motion/Reveal'
 import { SectionHead } from '@/components/sections/SectionHead'
-import { faqs } from '@/lib/content'
+import { client } from '@/sanity/client'
+import { cms } from '@/sanity/fetch'
+import { FAQS_QUERY } from '@/sanity/queries'
 
 /**
  * Objection handling before the first call. Native <details>, so it works
  * without JS and is keyboard-accessible by default.
  */
-export function Faq() {
+export async function Faq() {
+  const faqs = await client.fetch(FAQS_QUERY, {}, cms)
+  if (faqs.length === 0) return null
+
   return (
     <section id="faq" className="border-t border-rule">
       <div className="mx-auto w-full max-w-[1440px] px-6 py-20 lg:px-18 lg:py-28">
@@ -18,11 +23,11 @@ export function Faq() {
 
         <div className="mt-14 border-t border-rule lg:max-w-[880px]">
           {faqs.map((item, i) => (
-            <Reveal key={item.q} delay={Math.min(i, 5) * 0.05} y={14}>
+            <Reveal key={item._id} delay={Math.min(i, 5) * 0.05} y={14}>
               <details className="group border-b border-rule">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-left [&::-webkit-details-marker]:hidden">
                   <span className="font-display text-[22px] leading-[1.25] lg:text-[24px]">
-                    {item.q}
+                    {item.question}
                   </span>
                   <svg
                     width="18"
@@ -39,7 +44,7 @@ export function Faq() {
                   </svg>
                 </summary>
                 <p className="max-w-[62ch] pb-7 text-[16px] leading-[1.68] text-ink-muted">
-                  {item.a}
+                  {item.answer}
                 </p>
               </details>
             </Reveal>

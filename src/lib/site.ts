@@ -17,13 +17,13 @@ export const site = {
   },
 
   /**
-   * The one call to action on the site. Replace `href` with the
-   * [CAL.COM / CALENDLY LINK] when there is one; until then it opens an email
-   * with the subject pre-filled, so the step still works.
+   * The one call to action on the site. It lands on the contact form rather
+   * than a `mailto:`, which silently does nothing on devices without a mail
+   * app. Swap in a Cal.com / Calendly URL here if one is ever set up.
    */
   booking: {
     label: 'Book a 30-minute call',
-    href: 'mailto:vaibhavr325@gmail.com?subject=Dev%20Chowk%20%E2%80%94%2030-minute%20call',
+    href: '/contact#enquiry',
   },
 
   /** No office — deliberate, and worth saying plainly rather than hiding. */

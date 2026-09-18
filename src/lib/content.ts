@@ -1,10 +1,15 @@
 /**
- * Site content. Phase 3 moves each of these into Sanity as document types —
- * `service`, `testimonial`, `faq` — so the shapes here are deliberately close
- * to the schemas they will become.
+ * TWO KINDS OF CONTENT LIVE HERE — read this before editing.
  *
- * Voice: lead with the buyer's situation or the outcome; concrete nouns; no
- * metaphor. Anything not yet true stays [BRACKETED].
+ * 1. EDITORIAL — situations, capabilities, engagement, faqs, testimonials,
+ *    products, trackRecord. These now live in Sanity and the site reads them
+ *    from there. The copies below are the SEED SOURCE ONLY
+ *    (`scripts/seed.mts`). Editing them here changes nothing on the site —
+ *    edit in /studio instead.
+ *
+ * 2. TAXONOMY — skillGroups, stack, aiOffers, aiTags. These stay in code on
+ *    purpose: they describe the codebase's capabilities and change with it,
+ *    not with marketing. The site reads these directly.
  */
 
 // ---------------------------------------------------------------------------
@@ -98,7 +103,7 @@ export const capabilities: Capability[] = [
 export type EngagementStep = {
   n: string
   title: string
-  /** Duration and cost, in the mono eyebrow style. */
+  /** Duration, in the mono eyebrow style. No prices — rates are discussed on the call. */
   meta: string
   body: string
 }
@@ -114,20 +119,20 @@ export const engagement = {
     {
       n: '02',
       title: 'Trial sprint',
-      meta: '[ONE WEEK] · no charge',
-      body: 'We take a real item from your backlog and deliver it to production standard. You keep everything we produce, whether or not we continue.',
+      meta: 'Two weeks · no charge',
+      body: 'Two weeks of real work from your backlog, delivered to production standard, to jump-start the project. You keep everything we produce, whether or not we continue.',
     },
     {
       n: '03',
       title: 'Discovery',
-      meta: '1–2 weeks · fixed price',
+      meta: '1–2 weeks',
       body: 'Architecture, delivery plan, estimate and risks — written down and yours to use with any team.',
     },
     {
       n: '04',
       title: 'Build',
-      meta: 'Fixed scope or monthly retainer',
-      body: 'Fixed scope where scope is clear; a monthly retainer where it isn’t. Working software every sprint and a written status every week.',
+      meta: 'Scoped or ongoing',
+      body: 'A defined scope where the work is clear; an ongoing engagement where it isn’t. Working software every sprint and a written status every week.',
     },
     {
       n: '05',
@@ -136,9 +141,6 @@ export const engagement = {
       body: 'Ongoing ownership if you want it — monitoring, maintenance, improvements, on-call. Or a documented handover to your team.',
     },
   ] satisfies EngagementStep[],
-  pricing:
-    'Fixed-price discovery. Fixed-scope builds or monthly retainers. No hourly billing and no surprise invoices — every proposal states the price, the timeline and what’s excluded.',
-  pricingFloor: '[Engagements start from ₹/$ X per month.]',
 }
 
 // ---------------------------------------------------------------------------
@@ -467,12 +469,8 @@ export const faqs: Faq[] = [
     a: 'You do. Repositories, cloud accounts, credentials and IP are yours from day one.',
   },
   {
-    q: 'How do you charge?',
-    a: 'Fixed-price discovery, then fixed-scope builds or monthly retainers. Never hourly. Every proposal states price, timeline and exclusions.',
-  },
-  {
     q: 'What is the trial sprint?',
-    a: '[One week] of real work on your backlog at no charge, delivered to production standard. It’s how we both find out whether this works before money changes hands.',
+    a: 'Two weeks of real work on your backlog, at no charge, to jump-start the project — delivered to production standard. It’s how we both find out whether this works before either of us commits.',
   },
   {
     q: 'How will we communicate?',
@@ -480,11 +478,11 @@ export const faqs: Faq[] = [
   },
   {
     q: 'Where is the team?',
-    a: 'Fully remote. We work [TIMEZONE OVERLAP] with clients in [REGIONS].',
+    a: 'Fully remote, working with clients across the globe.',
   },
   {
     q: 'What’s the minimum engagement?',
-    a: 'Discovery is 1–2 weeks. Builds typically run [N] weeks or more; retainers are monthly with [N] days’ notice.',
+    a: 'Discovery takes one to two weeks. After that, engagements are sized to the work — from a single feature to long-term ownership of a product.',
   },
   {
     q: 'Do you sign NDAs?',

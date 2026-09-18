@@ -85,6 +85,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
           <div className="flex shrink-0 flex-col gap-3 p-6">
             <Link
               href={site.booking.href}
+              onClick={() => ref.current?.close()}
               className="flex items-center justify-center bg-ink py-4 text-[15px] font-medium text-paper"
             >
               {site.booking.label}

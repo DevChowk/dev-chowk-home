@@ -1,10 +1,12 @@
-import type { Product } from '@/lib/content'
+import type { PRODUCTS_QUERY_RESULT } from '@/sanity.types'
+
+type Product = PRODUCTS_QUERY_RESULT[number]
 
 /** One product, as shown on `/work` and in the homepage teaser. */
 export function ProductCard({ product: p }: { product: Product }) {
   const label =
-    p.kind === 'client' && p.client
-      ? `Client · ${p.client.name}${p.client.role ? `, ${p.client.role}` : ''}`
+    p.kind === 'client' && p.clientName
+      ? `Client · ${p.clientName}${p.clientRole ? `, ${p.clientRole}` : ''}`
       : 'Our product'
 
   return (
@@ -16,37 +18,43 @@ export function ProductCard({ product: p }: { product: Product }) {
         <h3 className="font-display text-[32px] leading-[1.08] font-normal tracking-[-0.01em] lg:text-[38px]">
           {p.name}
         </h3>
-        <a
-          href={p.href}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="group flex w-fit items-center gap-2 font-mono text-[11px] tracking-[0.12em] text-brass uppercase"
-        >
-          {p.url}
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            className="arrow-nudge"
-            aria-hidden="true"
+        {p.href && p.url && (
+          <a
+            href={p.href}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="group flex w-fit items-center gap-2 font-mono text-[11px] tracking-[0.12em] text-brass uppercase"
           >
-            <path d="M3 13L13 3M6 3h7v7" />
-          </svg>
-        </a>
+            {p.url}
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              className="arrow-nudge"
+              aria-hidden="true"
+            >
+              <path d="M3 13L13 3M6 3h7v7" />
+            </svg>
+          </a>
+        )}
       </div>
 
       <div className="flex flex-col gap-4">
-        <p className="font-display text-[22px] leading-[1.3] italic lg:text-[24px]">{p.tagline}</p>
+        {p.tagline && (
+          <p className="font-display text-[22px] leading-[1.3] italic lg:text-[24px]">
+            {p.tagline}
+          </p>
+        )}
         <p className="text-[16px] leading-[1.68] text-ink-muted">{p.body}</p>
         {p.detail && <p className="text-[16px] leading-[1.68] text-ink-muted">{p.detail}</p>}
-        {p.scope && (
+        {p.scope && p.scope.length > 0 && (
           <dl className="mt-1 grid grid-cols-1 gap-x-8 gap-y-2 border-t border-rule pt-4 sm:grid-cols-2">
             {p.scope.map((row) => (
-              <div key={row.label} className="flex gap-3 text-[14px]">
+              <div key={row._key} className="flex gap-3 text-[14px]">
                 <dt className="w-24 shrink-0 font-mono text-[11px] tracking-[0.1em] text-ink-muted uppercase">
                   {row.label}
                 </dt>
@@ -55,16 +63,18 @@ export function ProductCard({ product: p }: { product: Product }) {
             ))}
           </dl>
         )}
-        <ul className="mt-1 flex flex-wrap gap-2">
-          {p.tags.map((t) => (
-            <li
-              key={t}
-              className="border border-rule px-2.5 py-1 font-mono text-[11px] tracking-[0.06em] text-ink-muted"
-            >
-              {t}
-            </li>
-          ))}
-        </ul>
+        {p.tags && p.tags.length > 0 && (
+          <ul className="mt-1 flex flex-wrap gap-2">
+            {p.tags.map((t) => (
+              <li
+                key={t}
+                className="border border-rule px-2.5 py-1 font-mono text-[11px] tracking-[0.06em] text-ink-muted"
+              >
+                {t}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </article>
   )

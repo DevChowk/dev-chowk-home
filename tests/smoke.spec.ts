@@ -19,6 +19,8 @@ test.describe('routes load', () => {
       const response = await page.goto(path)
       expect(response?.status(), `${path} HTTP status`).toBe(200)
       await expect(page.locator('h1').first()).toContainText(heading)
+      const body = await page.locator('body').innerText()
+      expect(body, `${path} shows an unfilled [PLACEHOLDER]`).not.toMatch(/\[[A-Z][^\]]{2,60}\]/)
     })
   }
 
@@ -88,6 +90,13 @@ test.describe('interaction', () => {
     expect(await isDark(), 'theme survives reload').toBe(!before)
   })
 
+  test('"Book a call" lands on the contact form', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('link', { name: 'Book a call', exact: true }).click()
+    await expect(page).toHaveURL(/\/contact#enquiry$/)
+    await expect(page.locator('#enquiry form')).toBeInViewport()
+  })
+
   test('mobile menu opens and exposes every nav link', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
@@ -119,7 +128,7 @@ test.describe('contact form', () => {
 
   test('a valid submission reaches the server action and resolves', async ({ page }) => {
     await page.goto('/contact')
-    // The timing guard rejects anything submitted within 3s of mount.
+    // The timing guard rejects anything submitted within 1.5s of mount.
     await page.waitForTimeout(2000)
     await page.fill('input[name="name"]', 'Smoke Test')
     await page.fill('input[name="email"]', 'smoke@example.com')
@@ -139,5 +148,53 @@ test.describe('contact form', () => {
     await expect(page.getByRole('status').or(page.getByRole('alert')).first()).toBeVisible({
       timeout: 15_000,
     })
+  })
+})
+
+test.describe('CMS', () => {
+  test('/studio boots the Sanity Studio and is not indexable', async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', (e) => errors.push(e.message))
+    const response = await page.goto('/studio')
+    expect(response?.status()).toBe(200)
+    // Unauthenticated visitors land on Sanity's login screen — proof it mounted.
+    await expect(page.getByText(/choose login provider/i)).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
+    expect(errors, 'Studio runtime errors').toEqual([])
+  })
+
+  test('site CSS does not leak into the Studio', async ({ page }) => {
+    await page.goto('/studio')
+    await expect(page.getByText(/choose login provider/i)).toBeVisible({ timeout: 30_000 })
+    const token = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--paper').trim()
+    )
+    expect(token, 'Ink & Brass tokens must not be present inside /studio').toBe('')
+  })
+
+  test('homepage content is served from Sanity', async ({ page }) => {
+    await page.goto('/')
+    for (const title of [
+      'Technology consulting & architecture',
+      'AI engineering',
+      'Cloud, DevOps & infrastructure',
+      'Launching something new',
+      'Trial sprint',
+      'Who owns the code?',
+      'KundaliPro',
+      'Bumpp',
+    ]) {
+      await expect(page.getByText(title, { exact: true }).first(), title).toBeAttached()
+    }
+  })
+
+  test('publishing gates hold — no unapproved testimonials, no placeholders', async ({ page }) => {
+    await page.goto('/')
+    // No testimonial has permissionGranted, so the whole section must be absent.
+    await expect(page.getByRole('heading', { name: /what clients say/i })).toHaveCount(0)
+    const body = await page.locator('body').innerText()
+    for (const placeholder of ['[CLIENT NAME]', '[COMPANY]', '[WHERE THIS CAME FROM]']) {
+      expect(body, `${placeholder} leaked onto the page`).not.toContain(placeholder)
+    }
   })
 })

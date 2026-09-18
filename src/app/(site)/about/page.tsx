@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const principles = [
   {
     n: '01',
-    title: 'Straight answers on cost and scope',
+    title: 'Straight answers on scope and effort',
     body: 'Including the parts that are slow, unglamorous, or that we think you shouldn’t build.',
   },
   {

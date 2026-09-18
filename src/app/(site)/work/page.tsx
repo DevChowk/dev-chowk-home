@@ -3,7 +3,9 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/Button'
 import { ProductCard } from '@/components/ui/ProductCard'
-import { products } from '@/lib/content'
+import { client } from '@/sanity/client'
+import { cms } from '@/sanity/fetch'
+import { PRODUCTS_QUERY } from '@/sanity/queries'
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -12,7 +14,9 @@ export const metadata: Metadata = {
     'Products Dev Chowk has built and runs — KundaliPro, an AI assistant on WhatsApp, and Bumpp, a real-time random-chat web platform built for Vinayak Sharma.',
 }
 
-export default function WorkPage() {
+export default async function WorkPage() {
+  const products = await client.fetch(PRODUCTS_QUERY, {}, cms)
+
   return (
     <div id="main">
       <PageHeader
@@ -25,7 +29,7 @@ export default function WorkPage() {
       <div className="mx-auto w-full max-w-[1440px] px-6 pb-20 lg:px-18 lg:pb-28">
         <div className="flex flex-col border-t border-rule">
           {products.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.1} y={22}>
+            <Reveal key={p._id} delay={i * 0.1} y={22}>
               <ProductCard product={p} />
             </Reveal>
           ))}
