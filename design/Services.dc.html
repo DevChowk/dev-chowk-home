@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Instrument Sans', system-ui, sans-serif; }
+    a { color: #8f6425; text-decoration: none; }
+    a:hover { color: #12110f; }
+    .stall { display: grid; grid-template-columns: 56px 300px minmax(0, 1fr) 24px; gap: 40px; align-items: start; padding: 32px 0; border-bottom: 1px solid #e0d8cb; }
+    .num { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; color: #8f6425; padding-top: 10px; }
+    .ttl { margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 32px; line-height: 1.12; font-weight: 400; letter-spacing: -0.01em; }
+    .dsc { margin: 0; font-size: 16px; line-height: 1.62; color: #6b645a; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #6b645a; border: 1px solid #e0d8cb; padding: 4px 9px; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; min-height: 1440px; background: #faf7f2; color: #12110f; padding: 88px 72px 72px; box-sizing: border-box; display: flex; flex-direction: column; gap: 56px;">
+
+  <!-- section head -->
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 80px; align-items: end;">
+    <div style="display: flex; flex-direction: column; gap: 26px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: #8f6425;">02</span>
+        <span style="width: 40px; height: 1px; background: #8f6425;"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: #6b645a;">THE STALLS</span>
+      </div>
+      <h2 style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 62px; line-height: 1.04; letter-spacing: -0.02em; font-weight: 400;">
+        What you'll find<br>in the square.
+      </h2>
+    </div>
+    <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.68; color: #6b645a;">
+      Six things we do properly, rather than twenty we'd have to learn on your budget.
+      Pick one to start — they overlap more than the list makes them look.
+    </p>
+  </div>
+
+  <!-- stalls -->
+  <div style="display: flex; flex-direction: column; border-top: 1px solid #e0d8cb;">
+
+    <div class="stall">
+      <div class="num">01</div>
+      <h3 class="ttl">Product engineering</h3>
+      <div>
+        <p class="dsc">Web and mobile products end to end — from the first schema to the thing your users open every morning. We write the code, own the deploys, and stay long enough to fix what breaks.</p>
+        <div class="tags"><span class="tag">TYPESCRIPT</span><span class="tag">NEXT.JS</span><span class="tag">REACT NATIVE</span><span class="tag">NODE</span><span class="tag">POSTGRES</span></div>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.3" stroke-linecap="round" style="margin-top: 10px;"><path d="M3 13L13 3M6 3h7v7"/></svg>
+    </div>
+
+    <div class="stall">
+      <div class="num">02</div>
+      <h3 class="ttl">Platform &amp; infrastructure</h3>
+      <div>
+        <p class="dsc">The layer nobody demos: environments, pipelines, observability, cost. Usually the reason a product that works on a laptop falls over in front of real traffic.</p>
+        <div class="tags"><span class="tag">AWS</span><span class="tag">TERRAFORM</span><span class="tag">DOCKER</span><span class="tag">KUBERNETES</span><span class="tag">CI/CD</span></div>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.3" stroke-linecap="round" style="margin-top: 10px;"><path d="M3 13L13 3M6 3h7v7"/></svg>
+    </div>
+
+    <div class="stall">
+      <div class="num">03</div>
+      <h3 class="ttl">Design systems &amp; UI</h3>
+      <div>
+        <p class="dsc">Interface design, and the component library that keeps it consistent after we leave. Tokens, states, dark mode and accessibility decided once — not re-argued on every screen.</p>
+        <div class="tags"><span class="tag">FIGMA</span><span class="tag">DESIGN TOKENS</span><span class="tag">STORYBOOK</span><span class="tag">WCAG 2.2</span></div>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.3" stroke-linecap="round" style="margin-top: 10px;"><path d="M3 13L13 3M6 3h7v7"/></svg>
+    </div>
+
+    <div class="stall">
+      <div class="num">04</div>
+      <h3 class="ttl">SaaS build-out</h3>
+      <div>
+        <p class="dsc">Multi-tenancy, billing, roles, audit logs, the admin panel your support team actually lives in. The unglamorous half of a SaaS, and the half that decides whether it scales.</p>
+        <div class="tags"><span class="tag">STRIPE</span><span class="tag">RBAC</span><span class="tag">MULTI-TENANCY</span><span class="tag">WEBHOOKS</span></div>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.3" stroke-linecap="round" style="margin-top: 10px;"><path d="M3 13L13 3M6 3h7v7"/></svg>
+    </div>
+
+    <div class="stall">
+      <div class="num">05</div>
+      <h3 class="ttl">AI, built in</h3>
+      <div>
+        <p class="dsc">Retrieval, agents and evaluation wired into a product rather than bolted onto it. We'll also tell you when the answer is a database query and not a model.</p>
+        <div class="tags"><span class="tag">RAG</span><span class="tag">EVALS</span><span class="tag">VECTOR SEARCH</span><span class="tag">TOOL USE</span></div>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.3" stroke-linecap="round" style="margin-top: 10px;"><path d="M3 13L13 3M6 3h7v7"/></svg>
+    </div>
+
+    <div class="stall" style="border-bottom: 1px solid #e0d8cb;">
+      <div class="num">06</div>
+      <h3 class="ttl">Audit &amp; rescue</h3>
+      <div>
+        <p class="dsc">An honest read on a codebase you inherited or outgrew, and a sequenced plan to fix it. Delivered as a document you can act on with or without us.</p>
+        <div class="tags"><span class="tag">CODE REVIEW</span><span class="tag">ARCHITECTURE</span><span class="tag">PERFORMANCE</span><span class="tag">SECURITY</span></div>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.3" stroke-linecap="round" style="margin-top: 10px;"><path d="M3 13L13 3M6 3h7v7"/></svg>
+    </div>
+
+  </div>
+
+  <!-- section foot -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 40px; padding-top: 4px;">
+    <p style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 26px; font-style: italic; color: #12110f;">
+      Not sure which stall you need? That's a normal place to start.
+    </p>
+    <div style="background: #12110f; color: #faf7f2; font-size: 15px; font-weight: 500; padding: 15px 30px; display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+      Tell us what you're building
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#faf7f2" stroke-width="1.5" stroke-linecap="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

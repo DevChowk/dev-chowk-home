@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Instrument Sans', system-ui, sans-serif; }
+    a { color: #8f6425; text-decoration: none; }
+    a:hover { color: #12110f; }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #6b645a; }
+    .row { display: grid; grid-template-columns: 132px 150px minmax(0, 1fr) 78px; gap: 32px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid #e0d8cb; }
+    .rowttl { margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 27px; line-height: 1.24; font-weight: 400; letter-spacing: -0.01em; }
+    .chip { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; padding: 6px 12px; border: 1px solid #e0d8cb; color: #6b645a; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; min-height: 1480px; background: #faf7f2; color: #12110f; padding: 88px 72px 72px; box-sizing: border-box; display: flex; flex-direction: column; gap: 52px;">
+
+  <!-- head -->
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 80px; align-items: end;">
+    <div style="display: flex; flex-direction: column; gap: 26px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span class="meta" style="color: #8f6425; font-size: 12px; letter-spacing: 0.2em;">05</span>
+        <span style="width: 40px; height: 1px; background: #8f6425;"></span>
+        <span class="meta" style="font-size: 12px; letter-spacing: 0.2em;">THE NOTICE BOARD</span>
+      </div>
+      <h1 style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 62px; line-height: 1.04; letter-spacing: -0.02em; font-weight: 400;">
+        Notes from the square.
+      </h1>
+    </div>
+    <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.68; color: #6b645a;">
+      What we've learned building and un-building software. Written by the people who did the work,
+      not by a content team.
+    </p>
+  </div>
+
+  <!-- filters -->
+  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+    <span class="chip" style="background: #12110f; color: #faf7f2; border-color: #12110f;">ALL</span>
+    <span class="chip">ENGINEERING</span>
+    <span class="chip">ARCHITECTURE</span>
+    <span class="chip">PLATFORM</span>
+    <span class="chip">AI</span>
+    <span class="chip">DESIGN</span>
+  </div>
+
+  <!-- featured -->
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; border-top: 1px solid #12110f; border-bottom: 1px solid #e0d8cb; padding: 44px 0;">
+    <div style="display: flex; flex-direction: column; gap: 22px;">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span class="meta" style="color: #8f6425;">FEATURED</span>
+        <span style="width: 1px; height: 12px; background: #e0d8cb;"></span>
+        <span class="meta">ARCHITECTURE</span>
+        <span style="width: 1px; height: 12px; background: #e0d8cb;"></span>
+        <span class="meta">[N] MIN READ</span>
+      </div>
+      <h2 style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 400;">
+        Multi-tenancy is a data model decision, not a middleware one
+      </h2>
+      <p style="margin: 0; font-size: 17px; line-height: 1.68; color: #6b645a; max-width: 560px;">
+        Most teams pick their tenancy strategy in week one and find out what they picked in year
+        two. Here's the decision laid out properly — row-level, schema-level and database-level —
+        and the migration cost of changing your mind later.
+      </p>
+      <div style="display: flex; align-items: center; gap: 14px; padding-top: 4px;">
+        <span style="width: 34px; height: 34px; border: 1px solid #e0d8cb; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8f6425;">DC</span>
+        <span style="font-size: 14px; color: #6b645a;">[AUTHOR NAME] · [DATE]</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 500; color: #12110f; padding-top: 6px;">
+        Read the piece
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.5" stroke-linecap="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg>
+      </div>
+    </div>
+
+    <!-- cover placeholder, jaali -->
+    <div style="height: 330px; background: #f3ede4; border: 1px solid #e0d8cb; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 22px;">
+      <svg width="520" height="330" viewBox="0 0 520 330" style="position: absolute; inset: 0;">
+        <defs>
+          <pattern id="jb" width="86" height="86" patternUnits="userSpaceOnUse">
+            <g fill="none" stroke="#8f6425" stroke-width="1" opacity="0.32">
+              <path d="M43 0 L86 43 L43 86 L0 43 Z"/>
+              <circle cx="43" cy="43" r="21"/>
+              <path d="M0 0 L86 86 M86 0 L0 86"/>
+            </g>
+          </pattern>
+        </defs>
+        <rect width="520" height="330" fill="url(#jb)"/>
+      </svg>
+      <span class="meta" style="position: relative; background: #faf7f2; padding: 6px 10px; border: 1px solid #e0d8cb;">[COVER IMAGE]</span>
+    </div>
+  </div>
+
+  <!-- list -->
+  <div style="display: flex; flex-direction: column;">
+
+    <div class="row">
+      <span class="meta">[DATE]</span>
+      <span class="meta" style="color: #8f6425;">ENGINEERING</span>
+      <h3 class="rowttl">What we check before we say yes to a rescue project</h3>
+      <span class="meta" style="text-align: right;">[N] MIN</span>
+    </div>
+
+    <div class="row">
+      <span class="meta">[DATE]</span>
+      <span class="meta" style="color: #8f6425;">AI</span>
+      <h3 class="rowttl">The three questions that quietly kill most RAG demos</h3>
+      <span class="meta" style="text-align: right;">[N] MIN</span>
+    </div>
+
+    <div class="row">
+      <span class="meta">[DATE]</span>
+      <span class="meta" style="color: #8f6425;">PLATFORM</span>
+      <h3 class="rowttl">Your CI is slow because it's doing your test suite's job</h3>
+      <span class="meta" style="text-align: right;">[N] MIN</span>
+    </div>
+
+    <div class="row">
+      <span class="meta">[DATE]</span>
+      <span class="meta" style="color: #8f6425;">DESIGN</span>
+      <h3 class="rowttl">Dark mode is a token problem long before it's a colour problem</h3>
+      <span class="meta" style="text-align: right;">[N] MIN</span>
+    </div>
+
+    <div class="row" style="border-bottom: none;">
+      <span class="meta">[DATE]</span>
+      <span class="meta" style="color: #8f6425;">ENGINEERING</span>
+      <h3 class="rowttl">We deleted our own marketing site and started over. Here's why</h3>
+      <span class="meta" style="text-align: right;">[N] MIN</span>
+    </div>
+
+  </div>
+
+  <!-- foot -->
+  <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e0d8cb; padding-top: 26px;">
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 500;">
+      Older notes
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#8f6425" stroke-width="1.5" stroke-linecap="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span class="meta">SUBSCRIBE VIA</span>
+      <span class="chip">RSS</span>
+      <span class="chip">EMAIL</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
