@@ -12,7 +12,7 @@ import { site } from '@/lib/site'
    submission returns the same shape as a validation error.
    --------------------------------------------------------------------------- */
 
-const MIN_FILL_MS = 3_000
+const MIN_FILL_MS = 1_500
 const RATE_WINDOW_MS = 10 * 60_000
 const RATE_MAX = 5
 
@@ -52,25 +52,9 @@ export async function submitLead(_prev: LeadState, formData: FormData): Promise<
     return { status: 'error', message: 'Something went wrong. Please try again.', values }
   }
 
-  // 2. Timing — a form filled in under three seconds was not filled by a person.
-  //    Skipped when the field is absent (no-JS submission).
-  const startedAt = Number(str(formData.get('ts')))
-  if (Number.isFinite(startedAt) && startedAt > 0 && Date.now() - startedAt < MIN_FILL_MS) {
-    return { status: 'error', message: 'Something went wrong. Please try again.', values }
-  }
-
-  // 3. Rate limit per hashed IP.
-  const h = await headers()
-  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown'
-  if (rateLimited(hashIp(ip))) {
-    return {
-      status: 'error',
-      message: 'Too many messages from this connection. Please try again in a few minutes.',
-      values,
-    }
-  }
-
-  // 4. Validate. The server is the authority even when the client checked first.
+  // 2. Validate before the bot heuristics, so a real person who types quickly
+  //    or uses autofill is told exactly what is wrong rather than being met
+  //    with a generic failure. Field errors leak nothing useful to a bot.
   const parsed = leadSchema.safeParse(values)
   if (!parsed.success) {
     const errors: LeadState['errors'] = {}
@@ -79,6 +63,24 @@ export async function submitLead(_prev: LeadState, formData: FormData): Promise<
       if (field && !errors[field]) errors[field] = issue.message
     }
     return { status: 'error', errors, values }
+  }
+
+  // 3. Timing — a valid-looking form completed almost instantly was not
+  //    completed by a person. Skipped when the field is absent (no-JS).
+  const startedAt = Number(str(formData.get('ts')))
+  if (Number.isFinite(startedAt) && startedAt > 0 && Date.now() - startedAt < MIN_FILL_MS) {
+    return { status: 'error', message: 'Something went wrong. Please try again.', values }
+  }
+
+  // 4. Rate limit per hashed IP.
+  const h = await headers()
+  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown'
+  if (rateLimited(hashIp(ip))) {
+    return {
+      status: 'error',
+      message: 'Too many messages from this connection. Please try again in a few minutes.',
+      values,
+    }
   }
 
   // 5. Deliver. Never report success unless the email actually went.

@@ -144,7 +144,11 @@ export function ContactForm() {
           {pending ? 'Sending…' : 'Send message'}
         </button>
         <p className="text-[13px] text-ink-muted">
-          No newsletter, no follow-up sequence. One reply, from a person.
+          No newsletter, no follow-up sequence. One reply, from a person.{' '}
+          <a href="/privacy" className="rule-draw whitespace-nowrap">
+            What we do with it
+          </a>
+          .
         </p>
       </div>
     </form>

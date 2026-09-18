@@ -13,6 +13,10 @@ const columns = [
     ],
   },
   {
+    heading: 'Legal',
+    links: [{ label: 'Privacy', href: '/privacy' }],
+  },
+  {
     heading: 'Contact',
     links: [
       { label: site.booking.label, href: site.booking.href },

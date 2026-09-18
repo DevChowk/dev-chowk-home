@@ -42,3 +42,9 @@ design/dev-chowk-ink-and-brass.html
 # local development files
 AGENTS.md
 CLAUDE.md
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/.playwright/
