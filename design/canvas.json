@@ -1,0 +1,42 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",       "x": 0,    "y": 0,    "w": 1440, "h": 900,  "title": "Hero — light" },
+    { "file": "HeroDark.dc.html",   "x": 1560, "y": 0,    "w": 1440, "h": 900,  "title": "Hero — dark" },
+    { "file": "MobileHero.dc.html", "x": 3120, "y": 0,    "w": 390,  "h": 844,  "title": "Hero — mobile" },
+    { "file": "Services.dc.html",   "x": 0,    "y": 1100, "w": 1440, "h": 1440, "title": "02 — The Stalls" },
+    { "file": "BlogIndex.dc.html",  "x": 1560, "y": 1100, "w": 1440, "h": 1480, "title": "05 — The Notice Board" },
+    { "file": "BlogPost.dc.html",   "x": 0,    "y": 2780, "w": 1440, "h": 1900, "title": "Blog post — dark" },
+    { "file": "ChowkMap.dc.html",   "x": 1560, "y": 2780, "w": 1440, "h": 900,  "title": "Walk the Chowk" }
+  ],
+  "annotations": [
+    {
+      "id": "direction",
+      "x": 0,
+      "y": -250,
+      "w": 620,
+      "text": "INK & BRASS\n\nEditorial minimalism carrying the chowk metaphor — the square where a town's roads meet.\n\nNo glow, no glassmorphism, no gradient text. Hairline rules and air do the separating. Brass is the only accent on a page; indigo and terracotta appear once per viewport at most.\n\nType: Instrument Serif (display) + Instrument Sans (body) + JetBrains Mono (labels) + Tiro Devanagari Hindi (चौक).\n\nNote: this swaps the Fraunces/Inter pairing from the plan — both are on the overused list and were pulling it back toward generic."
+    },
+    {
+      "id": "placeholders",
+      "x": 700,
+      "y": -250,
+      "w": 560,
+      "text": "[BRACKETED TEXT] = a real fact I don't have yet.\n\nNothing on these boards is invented: no client names, no metrics, no testimonials, no star ratings, no 'trusted by 100+'. Every number that used to be on the site is gone rather than replaced with a smaller lie.\n\nYou fill in: city, month/year availability, author names and roles, reading times, cover images.\n\nThe blog post titles are drafted as examples of the voice — swap them for what you'd actually write."
+    },
+    {
+      "id": "brassnote",
+      "x": 1360,
+      "y": -250,
+      "w": 560,
+      "text": "LIGHT BRASS WAS DARKENED\n\nThe first pass used #9c6f2a, which lands at 4.16:1 on paper — under WCAG AA for normal text, and it was carrying small mono labels and every link.\n\nNow #8f6425, at 4.89:1. Dark-mode brass (#d9a441 on ink, 8.4:1) was already fine and is unchanged.\n\nWorth catching here: this token propagates into the whole build."
+    },
+    {
+      "id": "gamenote",
+      "x": 3120,
+      "y": 2780,
+      "w": 560,
+      "text": "The game is a second door, never the only one. Every stall is also a normal crawlable route, and the first focusable element on the page is the escape hatch out of it (shown focused here). Reduced-motion visitors get the list and a 'start anyway' button rather than an auto-starting canvas."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

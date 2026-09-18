@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Instrument Sans', system-ui, sans-serif; }
+    a { color: #d9a441; text-decoration: none; }
+    a:hover { color: #f5f0e8; }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #a49c90; }
+    .p { margin: 0; font-size: 18px; line-height: 1.78; color: #f5f0e8; }
+    .h2 { margin: 16px 0 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 34px; line-height: 1.2; font-weight: 400; color: #f5f0e8; letter-spacing: -0.01em; }
+    .rail { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #a49c90; }
+    .railon { color: #d9a441; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; min-height: 1900px; background: #12110f; color: #f5f0e8; padding: 40px 0 72px; box-sizing: border-box;">
+
+  <!-- slim nav -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 72px 26px; border-bottom: 1px solid #2e2a25;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#d9a441" stroke-width="1.4">
+        <path d="M10 1 L19 10 L10 19 L1 10 Z"/><path d="M10 6 L14 10 L10 14 L6 10 Z"/>
+      </svg>
+      <span class="meta" style="color: #f5f0e8; font-size: 13px; letter-spacing: 0.16em;">DEV CHOWK</span>
+      <span style="color: #2e2a25;">/</span>
+      <span class="meta">WRITING</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <span class="meta">READING · [N] MIN</span>
+      <div style="width: 180px; height: 2px; background: #2e2a25;"><div style="width: 62px; height: 2px; background: #d9a441;"></div></div>
+    </div>
+  </div>
+
+  <!-- article -->
+  <div style="display: grid; grid-template-columns: 220px minmax(0, 700px) 220px; gap: 80px; justify-content: center; padding: 64px 72px 0;">
+
+    <!-- left rail: contents -->
+    <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 8px;">
+      <span class="rail" style="color: #a49c90;">CONTENTS</span>
+      <span style="width: 100%; height: 1px; background: #2e2a25;"></span>
+      <span class="rail railon">01 — THE THREE SHAPES</span>
+      <span class="rail">02 — WHAT ROW-LEVEL COSTS</span>
+      <span class="rail">03 — THE MIGRATION TAX</span>
+      <span class="rail">04 — HOW WE DECIDE</span>
+    </div>
+
+    <!-- body -->
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span class="meta" style="color: #d9a441;">ARCHITECTURE</span>
+        <span style="width: 1px; height: 12px; background: #2e2a25;"></span>
+        <span class="meta">[DATE]</span>
+      </div>
+
+      <h1 style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 58px; line-height: 1.06; letter-spacing: -0.025em; font-weight: 400; text-wrap: pretty;">
+        Multi-tenancy is a data model decision, not a middleware one
+      </h1>
+
+      <div style="display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #2e2a25; padding-bottom: 30px;">
+        <span style="width: 34px; height: 34px; border: 1px solid #2e2a25; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #d9a441;">DC</span>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <span style="font-size: 14px; font-weight: 500;">[AUTHOR NAME]</span>
+          <span class="meta">[ROLE]</span>
+        </div>
+      </div>
+
+      <p class="p">
+        Tenancy strategy tends to get picked in the first week of a project, in a thread that
+        lasts under an hour, and understood somewhere in year two — normally the first time a
+        customer asks where their data physically lives, or the first time one tenant's bad query
+        takes everyone else down with it.
+      </p>
+
+      <p class="p">
+        The reason it goes wrong is that "multi-tenancy" gets filed as an access-control problem.
+        It isn't. Access control is the part you can change on a Tuesday. The shape of your data is
+        the part you cannot.
+      </p>
+
+      <h2 class="h2">01 — The three shapes</h2>
+
+      <p class="p">
+        There are really only three, and everything else is a blend. A shared table with a
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #d9a441;">tenant_id</span>
+        column on every row. A schema per tenant inside one database. A database per tenant. They
+        differ in exactly one thing that matters: where the blast radius of a mistake stops.
+      </p>
+
+      <!-- code -->
+      <div style="border: 1px solid #2e2a25; background: #1c1a17;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid #2e2a25;">
+          <span class="meta">POLICY.SQL</span>
+          <span class="meta" style="color: #a49c90;">POSTGRES 16</span>
+        </div>
+        <pre style="margin: 0; padding: 18px 16px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.72; color: #f5f0e8; overflow: hidden;"><span style="color: #a49c90;">-- row-level: one bad WHERE clause away from a breach</span>
+<span style="color: #8fa4cc;">ALTER TABLE</span> invoice <span style="color: #8fa4cc;">ENABLE ROW LEVEL SECURITY</span>;
+
+<span style="color: #8fa4cc;">CREATE POLICY</span> tenant_isolation <span style="color: #8fa4cc;">ON</span> invoice
+  <span style="color: #8fa4cc;">USING</span> (tenant_id = current_setting(<span style="color: #d97757;">'app.tenant'</span>)::uuid);</pre>
+      </div>
+
+      <!-- pull quote -->
+      <div style="border-top: 1px solid #d9a441; border-bottom: 1px solid #2e2a25; padding: 30px 0; margin: 8px 0;">
+        <p style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 30px; line-height: 1.32; font-style: italic; color: #f5f0e8;">
+          Row-level security is one forgotten <span style="font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 24px; color: #d9a441;">WHERE</span> clause away from being no security at all.
+        </p>
+      </div>
+
+      <h2 class="h2">02 — What row-level actually costs</h2>
+
+      <p class="p">
+        Row-level is the cheapest to build and the most expensive to be wrong about. It gives you
+        one migration path, one connection pool and one backup — and it puts every tenant's rows in
+        the same physical pages, which means noisy-neighbour problems arrive as a performance
+        mystery rather than an isolated incident.
+      </p>
+
+      <p class="p">
+        It is still the right default for most products. What changes the answer is regulation, a
+        customer large enough to negotiate, or a workload where one tenant is a thousand times the
+        size of the median.
+      </p>
+
+    </div>
+
+    <!-- right rail -->
+    <div style="display: flex; flex-direction: column; gap: 16px; padding-top: 8px;">
+      <span class="rail" style="color: #a49c90;">SHARE</span>
+      <span style="width: 100%; height: 1px; background: #2e2a25;"></span>
+      <div style="display: flex; gap: 10px;">
+        <span style="width: 34px; height: 34px; border: 1px solid #2e2a25; display: flex; align-items: center; justify-content: center;">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#a49c90" stroke-width="1.4"><path d="M2 2l5.2 6.4L2.4 14M14 2L8.8 8.4 13.6 14M2 2h2.6l9 12H11"/></svg>
+        </span>
+        <span style="width: 34px; height: 34px; border: 1px solid #2e2a25; display: flex; align-items: center; justify-content: center;">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#a49c90" stroke-width="1.4"><rect x="1.5" y="1.5" width="13" height="13"/><path d="M4.5 6.5v5M4.5 4.2v.1M7.5 11.5v-5M11 11.5V8.6a2 2 0 0 0-3.5-1.3"/></svg>
+        </span>
+        <span style="width: 34px; height: 34px; border: 1px solid #2e2a25; display: flex; align-items: center; justify-content: center;">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#a49c90" stroke-width="1.4"><path d="M6.5 9.5a3 3 0 0 0 4.2 0l2.3-2.3a3 3 0 0 0-4.2-4.2L7.6 4.2M9.5 6.5a3 3 0 0 0-4.2 0L3 8.8a3 3 0 0 0 4.2 4.2l1.2-1.2"/></svg>
+        </span>
+      </div>
+      <span class="rail" style="color: #a49c90; margin-top: 18px;">NEXT</span>
+      <span style="width: 100%; height: 1px; background: #2e2a25;"></span>
+      <p style="margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-size: 19px; line-height: 1.3; color: #f5f0e8;">The three questions that quietly kill most RAG demos</p>
+      <span class="rail">[N] MIN →</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

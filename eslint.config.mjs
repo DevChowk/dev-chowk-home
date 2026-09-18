@@ -1,0 +1,18 @@
+import coreWebVitals from 'eslint-config-next/core-web-vitals'
+import nextTypescript from 'eslint-config-next/typescript'
+
+const config = [
+  {
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'design/**',
+      'next-env.d.ts',
+      'src/sanity.types.ts',
+    ],
+  },
+  ...coreWebVitals,
+  ...nextTypescript,
+]
+
+export default config

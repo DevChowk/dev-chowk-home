@@ -1,0 +1,341 @@
+@import 'tailwindcss';
+
+/* Tailwind 4 replaces `darkMode: 'class'` with an explicit variant. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Tailwind gates every `hover:` utility behind `(hover: hover)`, which asks
+ * only about the PRIMARY pointing device. On a touchscreen laptop the
+ * touchscreen is primary, so every hover style silently dies even though a
+ * trackpad is attached. `any-hover` asks whether ANY input can hover — true
+ * for a hybrid laptop, still false on a phone, which is what we actually want.
+ */
+@custom-variant hover {
+  @media (any-hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Ink & Brass — semantic tokens.
+   Light is the default; `.dark` swaps the same names, so components never
+   carry a `dark:` variant for colour. Values are the exact ones signed off
+   on the design canvas.
+   --------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  /* The navbar's real height, so the hero can subtract it exactly instead of
+     guessing. Kept in sync by Navbar's h-21/lg:h-25 (border-box). */
+  --nav-h: 5.25rem;
+
+  --paper: #faf7f2;
+  --paper-raised: #f3ede4;
+  --ink: #12110f;
+  --ink-muted: #6b645a;
+  --rule: #e0d8cb;
+  --brass: #8f6425; /* 4.89:1 on paper — AA for normal text */
+  --brass-soft: #f0e4cd;
+  --indigo: #1e2a4a;
+  --terracotta: #a8482e;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --paper: #12110f;
+  --paper-raised: #1c1a17;
+  --ink: #f5f0e8;
+  --ink-muted: #a49c90;
+  --rule: #2e2a25;
+  --brass: #d9a441; /* 8.4:1 on ink */
+  --brass-soft: #2a2115;
+  --indigo: #8fa4cc;
+  --terracotta: #d97757;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-rule: var(--rule);
+  --color-brass: var(--brass);
+  --color-brass-soft: var(--brass-soft);
+  --color-indigo: var(--indigo);
+  --color-terracotta: var(--terracotta);
+
+  /* Fed by next/font in the site layout. */
+  --font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', monospace;
+  --font-devanagari: var(--font-tiro-devanagari), var(--font-instrument-serif), serif;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --nav-h: 6.25rem;
+  }
+}
+
+@layer base {
+  /*
+   * Tailwind 4 changed the default border colour to `currentColor`, which
+   * makes every bare `border` inherit text colour. Hairline rules are the
+   * whole separation strategy here, so default them back to the rule token.
+   */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--rule);
+  }
+
+  html {
+    /* Next 16 no longer forces scroll-behavior:auto during navigation, so
+       this needs the data attribute to avoid smooth-scrolling every route
+       change. See the site layout. */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Anchor targets clear the fixed nav. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  ::selection {
+    background-color: var(--brass);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 3px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion.
+   Layer 2 of 3 (MotionConfig and useReducedMotionSafe are the others).
+   Honours the OS setting *and* the in-page toggle, which writes
+   data-motion="reduced" onto <html>.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) *,
+  :root:not([data-motion='full']) ::before,
+  :root:not([data-motion='full']) ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] ::before,
+:root[data-motion='reduced'] ::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Utilities
+   --------------------------------------------------------------------------- */
+
+/* The chapter label that runs down the page: `00 —— THE GATE` */
+@utility chapter-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Long-form measure for prose columns. */
+@utility measure {
+  max-width: 43.75rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Interaction
+   Pure CSS so it costs no JS, and the reduced-motion block above already
+   collapses these transitions to ~0ms rather than needing a second rule.
+   --------------------------------------------------------------------------- */
+
+/*
+ * The drop fill. A panel slides down from above the button and takes over,
+ * inverting the label under it. `isolation` + z-index keep the fill behind
+ * the text without the text needing its own stacking context.
+ */
+@utility btn-drop {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: translateY(-101%);
+    transition: transform 0.42s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  @media (any-hover: hover) {
+    &:hover::before {
+      transform: translateY(0);
+    }
+  }
+
+  /* Keyboard users get the same affordance as mouse users. */
+  &:focus-visible::before {
+    transform: translateY(0);
+  }
+}
+
+/* The arrow that steps forward on hover, used on rows and links. */
+@utility arrow-nudge {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+  @media (any-hover: hover) {
+    .group:hover & {
+      transform: translate(3px, -3px);
+    }
+  }
+}
+
+/* A hairline that draws itself left-to-right under a row on hover. */
+@utility rule-draw {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background: var(--brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (any-hover: hover) {
+    &:hover::after {
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero height
+   --------------------------------------------------------------------------- */
+
+/*
+ * Exactly one screen, minus the nav — so the hero never produces a scrollbar
+ * of its own.
+ *
+ * The height is only *pinned* once the viewport is tall enough to hold the
+ * content. Below that (landscape phones, short windows) it falls back to a
+ * minimum and grows, because clipping the headline and the CTAs off the bottom
+ * is worse than letting the section be taller than the fold.
+ */
+@utility hero-full {
+  min-height: calc(100svh - var(--nav-h));
+
+  @media (min-height: 48rem) {
+    height: calc(100svh - var(--nav-h));
+  }
+}
+
+/*
+ * The lamp, scoped to a control. A soft highlight tracks the pointer across
+ * the button, on top of the drop fill — ::after paints after ::before at the
+ * same z-index, so the light reads as falling *on* the fill rather than under
+ * it. Position comes from PointerGlow; colour comes from the variant.
+ */
+@utility btn-glow {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--glow-o, 0);
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      120px circle at var(--mx, 50%) var(--my, 50%),
+      var(--glow-c, transparent),
+      transparent 68%
+    );
+  }
+}
+
+/* Light over a dark fill. */
+@utility glow-light {
+  --glow-c: color-mix(in oklab, white 30%, transparent);
+}
+
+/* Brass over paper, for outlined controls. */
+@utility glow-brass {
+  --glow-c: color-mix(in oklab, var(--brass) 26%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile menu
+   --------------------------------------------------------------------------- */
+
+/* Full-bleed <dialog> panel. The transition uses allow-discrete so the element
+   can animate in and out of the top layer without any JS. */
+@utility nav-drawer {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  border: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  opacity: 0;
+  translate: 0 -0.75rem;
+  transition:
+    opacity 0.28s ease,
+    translate 0.28s ease,
+    overlay 0.28s allow-discrete,
+    display 0.28s allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  &::backdrop {
+    background: rgb(0 0 0 / 0.4);
+  }
+}
+
+@starting-style {
+  .nav-drawer[open] {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+
+/* Stop the page scrolling behind an open dialog, without a JS scroll lock. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
