@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const base = process.env.NEXT_SITE_URL ?? 'http://localhost:3000'
+import { siteUrl as base } from '@/lib/siteUrl'
 
 export default function robots(): MetadataRoute.Robots {
   return {

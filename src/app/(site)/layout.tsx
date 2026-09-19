@@ -5,9 +5,8 @@ import { ThemeProvider } from '@/components/theme/ThemeProvider'
 import { MotionProvider } from '@/components/motion/MotionProvider'
 import { PointerGlow } from '@/components/motion/PointerGlow'
 import { fontVariables } from '@/lib/fonts'
+import { siteUrl } from '@/lib/siteUrl'
 import '@/styles/globals.css'
-
-const siteUrl = process.env.NEXT_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

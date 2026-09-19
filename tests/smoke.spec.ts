@@ -151,6 +151,22 @@ test.describe('discoverability', () => {
     }
   })
 
+  test('robots.txt and the sitemap agree on the site address', async ({ request, baseURL }) => {
+    // Production shipped for weeks announcing http://localhost:3000 to search
+    // engines, because the deployment's site URL was never read.
+    const robots = await (await request.get('/robots.txt')).text()
+    const declared = robots.match(/Sitemap:\s*(\S+)/)?.[1]
+    expect(declared, 'robots.txt must declare a sitemap').toBeTruthy()
+
+    const xml = await (await request.get('/sitemap.xml')).text()
+    const origins = new Set(
+      [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).origin)
+    )
+    expect([...origins], 'sitemap must use one origin').toHaveLength(1)
+    expect(new URL(declared!).origin, 'robots vs sitemap origin').toBe([...origins][0])
+    expect([...origins][0], 'origin must be the site being served').toBe(new URL(baseURL!).origin)
+  })
+
   test('robots.txt keeps private routes out', async ({ request }) => {
     const txt = await (await request.get('/robots.txt')).text()
     for (const path of ['/studio', '/styleguide']) {
@@ -276,6 +292,40 @@ test.describe('contact form', () => {
     await expect(page.getByRole('alert').first()).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText(/valid email address/i)).toBeVisible()
     await expect(page.getByRole('status')).toHaveCount(0)
+  })
+
+  test('a bot that fills the hidden honeypot field is rejected', async ({ page }) => {
+    await page.goto('/contact')
+    await page.waitForTimeout(2000)
+    await page.fill('input[name="name"]', 'Honeypot Bot')
+    await page.fill('input[name="email"]', 'bot@example.com')
+    await page.fill(
+      'textarea[name="message"]',
+      'A bot fills every field it can find, including the one no person can see.'
+    )
+    // Off-screen by design, so it is set the way a scripted filler would.
+    await page.locator('input[name="website"]').evaluate((el: HTMLInputElement) => {
+      el.value = 'https://spam.example'
+    })
+    await page.click('button[type="submit"]')
+
+    await expect(page.getByRole('alert').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByRole('status')).toHaveCount(0)
+  })
+
+  test('a valid form submitted instantly is rejected as machine-fast', async ({ page }) => {
+    await page.goto('/contact')
+    // No pause: a person cannot fill and submit this inside the timing guard.
+    await page.fill('input[name="name"]', 'Too Fast')
+    await page.fill('input[name="email"]', 'fast@example.com')
+    await page.fill(
+      'textarea[name="message"]',
+      'Valid content submitted far faster than a human could type it out here.'
+    )
+    await page.click('button[type="submit"]')
+
+    await expect(page.getByRole('alert').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByRole('status'), 'must not claim it was sent').toHaveCount(0)
   })
 
   test('a valid submission reaches the server action and resolves', async ({ page }) => {

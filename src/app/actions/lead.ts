@@ -21,15 +21,25 @@ const RATE_MAX = 5
  * cold start, which makes it a speed bump rather than a wall. Good enough
  * for a form with single-digit daily volume; the plan swaps this for a
  * Sanity-backed counter once the CMS lands.
+ *
+ * Only delivered messages are counted. Counting attempts meant a broken
+ * RESEND_API_KEY locked the sender out of the form they were failing to use:
+ * five "we couldn't send that" replies, then ten minutes of silence.
  */
 const hits = new Map<string, number[]>()
 
-function rateLimited(key: string): boolean {
+function recentHits(key: string): number[] {
   const now = Date.now()
   const recent = (hits.get(key) ?? []).filter((t) => now - t < RATE_WINDOW_MS)
-  recent.push(now)
-  hits.set(key, recent)
-  return recent.length > RATE_MAX
+  if (recent.length > 0) hits.set(key, recent)
+  else hits.delete(key)
+  return recent
+}
+
+function retryInMinutes(recent: number[]): string {
+  const oldest = recent[0] ?? Date.now()
+  const minutes = Math.max(1, Math.ceil((RATE_WINDOW_MS - (Date.now() - oldest)) / 60_000))
+  return `${minutes} minute${minutes === 1 ? '' : 's'}`
 }
 
 function hashIp(ip: string): string {
@@ -72,13 +82,15 @@ export async function submitLead(_prev: LeadState, formData: FormData): Promise<
     return { status: 'error', message: 'Something went wrong. Please try again.', values }
   }
 
-  // 4. Rate limit per hashed IP.
+  // 4. Rate limit per hashed IP, on messages actually delivered.
   const h = await headers()
   const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown'
-  if (rateLimited(hashIp(ip))) {
+  const key = hashIp(ip)
+  const recent = recentHits(key)
+  if (recent.length >= RATE_MAX) {
     return {
       status: 'error',
-      message: 'Too many messages from this connection. Please try again in a few minutes.',
+      message: `That's ${RATE_MAX} messages already — please try again in ${retryInMinutes(recent)}, or email ${site.email} directly.`,
       values,
     }
   }
@@ -97,6 +109,9 @@ export async function submitLead(_prev: LeadState, formData: FormData): Promise<
       values,
     }
   }
+
+  // Charged against the limit only now that a message really went out.
+  hits.set(key, [...recent, Date.now()])
 
   return {
     status: 'success',

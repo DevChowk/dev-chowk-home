@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const base = process.env.NEXT_SITE_URL ?? 'http://localhost:3000'
+import { siteUrl as base } from '@/lib/siteUrl'
 
 /**
  * Static routes for now. Phase 4 appends the CMS-driven ones (blog posts,
