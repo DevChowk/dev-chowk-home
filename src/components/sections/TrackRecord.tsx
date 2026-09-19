@@ -19,7 +19,7 @@ export async function TrackRecord() {
     <div className="flex flex-col gap-8">
       <Reveal y={14}>
         <div className="flex flex-col gap-3">
-          <p className="chapter-label">Track record</p>
+          <h2 className="chapter-label">Track record</h2>
           <p className="max-w-[60ch] text-[16px] leading-[1.68] text-ink-muted">
             Systems our engineers designed, built and ran before founding Dev Chowk. The scale and
             the outcomes are as delivered.

@@ -2,8 +2,21 @@ import type { PRODUCTS_QUERY_RESULT } from '@/sanity.types'
 
 type Product = PRODUCTS_QUERY_RESULT[number]
 
-/** One product, as shown on `/work` and in the homepage teaser. */
-export function ProductCard({ product: p }: { product: Product }) {
+/**
+ * One product, as shown on `/work` and in the homepage teaser.
+ *
+ * `headingLevel` exists because the same card sits at two depths: under the
+ * teaser's own h2 on the homepage, and directly under the page h1 on /work,
+ * where an h3 would skip a level and break the document outline.
+ */
+export function ProductCard({
+  product: p,
+  headingLevel = 3,
+}: {
+  product: Product
+  headingLevel?: 2 | 3
+}) {
+  const Heading = headingLevel === 2 ? 'h2' : 'h3'
   const label =
     p.kind === 'client' && p.clientName
       ? `Client · ${p.clientName}${p.clientRole ? `, ${p.clientRole}` : ''}`
@@ -15,9 +28,9 @@ export function ProductCard({ product: p }: { product: Product }) {
         <span className="w-fit border border-rule px-2.5 py-1 font-mono text-[11px] tracking-[0.1em] text-ink-muted uppercase">
           {label}
         </span>
-        <h3 className="font-display text-[32px] leading-[1.08] font-normal tracking-[-0.01em] lg:text-[38px]">
+        <Heading className="font-display text-[32px] leading-[1.08] font-normal tracking-[-0.01em] lg:text-[38px]">
           {p.name}
-        </h3>
+        </Heading>
         {p.href && p.url && (
           <a
             href={p.href}

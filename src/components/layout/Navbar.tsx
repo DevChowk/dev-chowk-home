@@ -9,6 +9,9 @@ const navLinks = [
   { label: 'Work', href: '/work' },
   { label: 'About', href: '/about' },
   { label: 'Writing', href: '/blog' },
+  // People scan a menu for the word "Contact"; the CTA button alone is not
+  // enough of a signal that there is a way to reach us.
+  { label: 'Contact', href: '/contact' },
 ]
 
 export function Navbar() {

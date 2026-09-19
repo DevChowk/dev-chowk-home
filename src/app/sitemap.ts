@@ -14,7 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/blog', priority: 0.8 },
     { path: '/about', priority: 0.7 },
     { path: '/contact', priority: 0.7 },
-    { path: '/chowk', priority: 0.4 },
+    // /chowk is noindex until the game ships, and a noindex page in the
+    // sitemap asks search engines to index what the page then forbids.
+    { path: '/privacy', priority: 0.3 },
   ]
 
   const lastModified = new Date()

@@ -30,7 +30,7 @@ export default async function WorkPage() {
         <div className="flex flex-col border-t border-rule">
           {products.map((p, i) => (
             <Reveal key={p._id} delay={i * 0.1} y={22}>
-              <ProductCard product={p} />
+              <ProductCard product={p} headingLevel={2} />
             </Reveal>
           ))}
         </div>

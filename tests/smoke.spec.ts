@@ -31,8 +31,65 @@ test.describe('routes load', () => {
 
       await page.waitForLoadState('networkidle')
       expect(problems, `${path} errored in the browser`).toEqual([])
+
+      // Structural faults a human notices late: a page with two or no h1, a
+      // field nobody can label, a link a screen reader announces as "link",
+      // a repeated id that breaks anchors, a skipped heading level.
+      const structure = await page.evaluate(() => {
+        const name = (el: Element) =>
+          ((el as HTMLElement).innerText || el.getAttribute('aria-label') || '').trim()
+        const ids = [...document.querySelectorAll('[id]')].map((el) => el.id)
+        const levels = [...document.querySelectorAll('h1,h2,h3,h4')].map((h) => +h.tagName.slice(1))
+        return {
+          h1: document.querySelectorAll('h1').length,
+          imgsNoAlt: [...document.querySelectorAll('img')].filter((i) => !i.hasAttribute('alt'))
+            .length,
+          namelessLinks: [...document.querySelectorAll('a')]
+            .filter((a) => !name(a) && !a.querySelector('svg'))
+            .map((a) => a.getAttribute('href')),
+          namelessButtons: [...document.querySelectorAll('button')].filter(
+            (b) => !name(b) && !b.querySelector('svg')
+          ).length,
+          unlabelledFields: [
+            ...document.querySelectorAll('input:not([type=hidden]), textarea, select'),
+          ]
+            .filter((f) => !(f as HTMLInputElement).labels?.length && !f.getAttribute('aria-label'))
+            .map((f) => (f as HTMLInputElement).name),
+          duplicateIds: [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))],
+          hasSkipLink: !!document.querySelector('a[href="#main"]'),
+          hasMain: !!document.querySelector('#main, main'),
+          headingJumps: levels.filter((lvl, i) => i > 0 && lvl - (levels[i - 1] ?? lvl) > 1).length,
+        }
+      })
+      expect(structure.h1, `${path} h1 count`).toBe(1)
+      expect(structure.imgsNoAlt, `${path} images without alt`).toBe(0)
+      expect(structure.namelessLinks, `${path} links with no accessible name`).toEqual([])
+      expect(structure.namelessButtons, `${path} buttons with no accessible name`).toBe(0)
+      expect(structure.unlabelledFields, `${path} form fields with no label`).toEqual([])
+      expect(structure.duplicateIds, `${path} duplicate element ids`).toEqual([])
+      expect(structure.hasSkipLink, `${path} skip link`).toBe(true)
+      expect(structure.hasMain, `${path} main landmark`).toBe(true)
+      expect(structure.headingJumps, `${path} skipped heading levels`).toBe(0)
     })
   }
+
+  test('every internal link on every page resolves', async ({ page, request }) => {
+    const checked = new Map<string, number>()
+    for (const [path] of ROUTES) {
+      await page.goto(path)
+      const hrefs = await page.evaluate(() =>
+        [...document.querySelectorAll('a[href^="/"]')].map((a) => a.getAttribute('href')!)
+      )
+      for (const href of new Set(hrefs)) {
+        const target = href.split('#')[0] || '/'
+        if (checked.has(target)) continue
+        checked.set(target, (await request.get(target)).status())
+      }
+    }
+    const broken = [...checked].filter(([, status]) => status !== 200)
+    expect(broken, 'internal links that do not return 200').toEqual([])
+    expect(checked.size, 'links were actually found and checked').toBeGreaterThan(5)
+  })
 
   test('unknown route 404s but still renders the branded page', async ({ page }) => {
     const response = await page.goto('/definitely-not-a-page')
@@ -48,6 +105,67 @@ test.describe('routes load', () => {
       const res = await request.get(path)
       expect(res.status(), path).toBe(200)
       expect(res.headers()['content-type'], path).toMatch(type)
+    }
+  })
+})
+
+test.describe('discoverability', () => {
+  // /contact existed and worked for days with no "Contact" in the menu. A
+  // route nobody can find is the same as a route that does not exist.
+  test('the menu and footer reach every public page', async ({ page }) => {
+    await page.goto('/')
+    const nav = page.locator('header')
+    for (const [label, href] of [
+      ['Services', '/services'],
+      ['Work', '/work'],
+      ['About', '/about'],
+      ['Writing', '/blog'],
+      ['Contact', '/contact'],
+    ] as const) {
+      await expect(nav.getByRole('link', { name: label, exact: true })).toHaveAttribute(
+        'href',
+        href
+      )
+    }
+    const footer = page.locator('footer')
+    await expect(footer.getByRole('link', { name: 'Privacy', exact: true })).toBeVisible()
+    for (const href of ['/services', '/work', '/about', '/blog']) {
+      await expect(footer.locator(`a[href="${href}"]`)).toHaveCount(1)
+    }
+  })
+
+  test('the sitemap and the noindex tags agree', async ({ page, request }) => {
+    const xml = await (await request.get('/sitemap.xml')).text()
+    const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname)
+    expect(paths, 'sitemap must list the pages that matter').toEqual(
+      expect.arrayContaining(['/', '/services', '/work', '/blog', '/about', '/contact', '/privacy'])
+    )
+    // Listing a noindex page asks search engines to index what the page forbids.
+    for (const path of paths) {
+      const response = await page.goto(path)
+      expect(response?.status(), `${path} is in the sitemap`).toBe(200)
+      await expect(
+        page.locator('meta[name="robots"]'),
+        `${path} is noindex but listed`
+      ).toHaveCount(0)
+    }
+  })
+
+  test('robots.txt keeps private routes out', async ({ request }) => {
+    const txt = await (await request.get('/robots.txt')).text()
+    for (const path of ['/studio', '/styleguide']) {
+      expect(txt, `${path} must be disallowed`).toContain(`Disallow: ${path}`)
+    }
+  })
+
+  test('links to other sites open safely in a new tab', async ({ page }) => {
+    await page.goto('/work')
+    const external = page.locator('a[href^="http"]:not([href*="localhost"])')
+    const count = await external.count()
+    expect(count, 'product links').toBeGreaterThan(0)
+    for (let i = 0; i < count; i++) {
+      await expect(external.nth(i)).toHaveAttribute('target', '_blank')
+      await expect(external.nth(i)).toHaveAttribute('rel', /noopener/)
     }
   })
 })
@@ -107,13 +225,37 @@ test.describe('interaction', () => {
     await expect(page.locator('#enquiry form')).toBeInViewport()
   })
 
+  test('FAQ answers open and close', async ({ page }) => {
+    await page.goto('/')
+    const item = page.locator('details').first()
+    const answer = item.locator('p').last()
+    await expect(answer).toBeHidden()
+    await item.locator('summary').click()
+    await expect(answer).toBeVisible()
+    await item.locator('summary').click()
+    await expect(answer).toBeHidden()
+  })
+
+  test('the motion toggle turns animation off and remembers it', async ({ page }) => {
+    await page.goto('/')
+    const toggle = page.getByRole('button', { name: /motion: (on|off)/i })
+    await expect(toggle).toHaveText(/motion: on/i)
+    await toggle.click()
+    await expect(toggle).toHaveText(/motion: off/i)
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced')
+    await page.reload()
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced')
+    // Leave the browser profile as it was found, so later tests still animate.
+    await page.getByRole('button', { name: /motion: off/i }).click()
+  })
+
   test('mobile menu opens and exposes every nav link', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
     await page.getByRole('button', { name: /open menu/i }).click()
     const drawer = page.locator('dialog.nav-drawer')
     await expect(drawer).toBeVisible()
-    for (const label of ['Services', 'Work', 'About', 'Writing']) {
+    for (const label of ['Services', 'Work', 'About', 'Writing', 'Contact']) {
       await expect(drawer.getByRole('link', { name: label, exact: true })).toBeVisible()
     }
   })
