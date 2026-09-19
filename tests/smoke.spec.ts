@@ -16,11 +16,21 @@ const ROUTES: [path: string, heading: RegExp][] = [
 test.describe('routes load', () => {
   for (const [path, heading] of ROUTES) {
     test(`${path} returns 200 and renders its h1`, async ({ page }) => {
+      // A page can return 200 and still be broken in the browser, so failed
+      // requests and thrown errors are collected rather than assumed absent.
+      const problems: string[] = []
+      page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`))
+      page.on('console', (m) => m.type() === 'error' && problems.push(`console: ${m.text()}`))
+      page.on('requestfailed', (r) => problems.push(`requestfailed: ${r.url()}`))
+
       const response = await page.goto(path)
       expect(response?.status(), `${path} HTTP status`).toBe(200)
       await expect(page.locator('h1').first()).toContainText(heading)
       const body = await page.locator('body').innerText()
       expect(body, `${path} shows an unfilled [PLACEHOLDER]`).not.toMatch(/\[[A-Z][^\]]{2,60}\]/)
+
+      await page.waitForLoadState('networkidle')
+      expect(problems, `${path} errored in the browser`).toEqual([])
     })
   }
 

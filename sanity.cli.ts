@@ -1,4 +1,5 @@
 import { defineCliConfig } from 'sanity/cli'
+import { dataset, projectId } from './src/sanity/env'
 
 /**
  * TypeGen note: `typegen.enabled` only runs during `sanity dev` / `sanity build`,
@@ -6,10 +7,7 @@ import { defineCliConfig } from 'sanity/cli'
  * npm lifecycle scripts (`predev` / `prebuild`) instead.
  */
 export default defineCliConfig({
-  api: {
-    projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-    dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-  },
+  api: { projectId, dataset },
   typegen: {
     path: './src/**/*.{ts,tsx}',
     schema: './schema.json',

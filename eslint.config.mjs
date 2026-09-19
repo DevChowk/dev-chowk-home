@@ -3,13 +3,7 @@ import nextTypescript from 'eslint-config-next/typescript'
 
 const config = [
   {
-    ignores: [
-      '.next/**',
-      'node_modules/**',
-      'design/**',
-      'next-env.d.ts',
-      'src/sanity.types.ts',
-    ],
+    ignores: ['.next/**', 'node_modules/**', 'design/**', 'next-env.d.ts', 'src/sanity.types.ts'],
   },
   ...coreWebVitals,
   ...nextTypescript,

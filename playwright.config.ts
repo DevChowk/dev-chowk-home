@@ -41,6 +41,7 @@ export default defineConfig({
     command: 'npm run build && npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
+    // Build + start on a cold .next cache runs past the 180s default.
+    timeout: 300_000,
   },
 })

@@ -54,7 +54,8 @@ export const siteSettings = defineType({
       title: 'Booking link',
       type: 'string',
       group: 'contact',
-      description: 'Where “Book a call” leads — /contact#enquiry (the contact form) or a Cal.com / Calendly URL.',
+      description:
+        'Where “Book a call” leads — /contact#enquiry (the contact form) or a Cal.com / Calendly URL.',
     }),
     defineField({
       name: 'socials',
