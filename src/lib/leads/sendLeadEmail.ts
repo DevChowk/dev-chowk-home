@@ -20,15 +20,24 @@ import { site } from '@/lib/site'
 export type SendResult =
   { ok: true; id: string | null } | { ok: false; reason: 'unconfigured' | 'failed' }
 
+/**
+ * A hosting dashboard stores the value literally, quotes included, so
+ * `LEAD_FROM_EMAIL="Dev Chowk <x@y>"` copied from .env.local arrives with the
+ * quotes attached and Resend rejects the sender. Strip them rather than make
+ * that a support question.
+ */
+const env = (name: string) =>
+  process.env[name]?.trim().replace(/^(["'])(.*)\1$/s, '$2') || undefined
+
 export async function sendLeadEmail(
   lead: LeadInput,
   meta: { pageUrl?: string }
 ): Promise<SendResult> {
-  const apiKey = process.env.RESEND_API_KEY
+  const apiKey = env('RESEND_API_KEY')
   if (!apiKey) return { ok: false, reason: 'unconfigured' }
 
-  const to = process.env.LEAD_TO_EMAIL ?? site.email
-  const from = process.env.LEAD_FROM_EMAIL ?? 'Dev Chowk <onboarding@resend.dev>'
+  const to = env('LEAD_TO_EMAIL') ?? site.email
+  const from = env('LEAD_FROM_EMAIL') ?? 'Dev Chowk <onboarding@resend.dev>'
 
   const company = lead.company ? lead.company : '—'
   const text = [
@@ -59,7 +68,14 @@ export async function sendLeadEmail(
       text,
     })
     if (error) {
-      console.error('[lead] Resend error', error)
+      // Logged with the addresses in play: the usual cause is a sender or
+      // recipient the Resend account is not allowed to use yet.
+      console.error('[lead] Resend rejected the message', {
+        from,
+        to,
+        name: error.name,
+        message: error.message,
+      })
       return { ok: false, reason: 'failed' }
     }
     return { ok: true, id: data?.id ?? null }
